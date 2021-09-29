@@ -21,7 +21,7 @@ function SendToDevices(tList, strCommand, strWallpaper)
 		for k,v in pairs(devices) do
 			if (v == "Identity") then proxyId = k end
 		end
-    end
+	end
 	if (proxyId == "") then return end
 	for id in tList:gfind("(%d+),") do
 		local roomId = tonumber(id) or 0
@@ -42,10 +42,10 @@ end
 ----------------------------------------------------------------------------------
 function EX_CMD.SETWALLPAPER(tParams)
 	Dbg("[EX_CMD] Set Wallpaper" .. " (" .. formatParams(tParams) .. ")")
-    local list = tParams["Room Selection"] or ""
-    local wallpaper = tParams["Wallpaper"] or ""
-    if (list == "") or (wallpaper == "") then return end
-    SendToDevices(list, "SET_LOCATION_PREFERENCE", wallpaper)
+	local list = tParams["Room Selection"] or ""
+	local wallpaper = tParams["Wallpaper"] or ""
+	if (list == "") or (wallpaper == "") then return end
+	SendToDevices(list, "SET_LOCATION_PREFERENCE", wallpaper)
 end
 
 -----------------------------------------------------------------------------
