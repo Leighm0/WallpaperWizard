@@ -31,7 +31,7 @@ function SendToDevices(tList, strCommand, strWallpaper)
 		tParams["NAME"] = "wallpaper"
 		tParams["VALUE"] = strWallpaper
 		C4:SendToDevice(proxyId, strCommand, tParams)
-		Dbg("C4:SendToDevice(5, \"" .. strCommand .. "\", " .. formatParams(tParams) .. ")")
+		Dbg("C4:SendToDevice(" .. proxyId .. ", \"" .. strCommand .. "\", " .. formatParams(tParams) .. ")")
 	end
 end
 
