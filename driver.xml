@@ -1,0 +1,75 @@
+<devicedata>
+	<copyright>Copyright 2021 Welton Cartel. All rights reserved.</copyright>
+	<manufacturer>Control4</manufacturer>
+	<model>Wallpaper Wizard</model>
+	<creator>Welton Cartel</creator>
+	<version>2</version>
+	<created>13/9/2021 12:00 AM</created>
+	<modified>29/9/2021 12:00 AM</modified>
+	<name>Wallpaper Wizard</name>
+	<small>devices_sm/Android.gif</small>
+	<large>devices_lg/Android.gif</large>
+	<control>lua_gen</control>
+	<driver>DriverWorks</driver>
+	<proxy>WallpaperWizard</proxy>
+	<combo>true</combo>
+	<events/>
+	<config>
+		<documentation>
+	Wallpaper Wizard by Welton Cartel
+
+	This driver allows setting UI Wallpaper of selected rooms to custom wallpaper via programming.
+
+
+	RELEASE NOTES:
+
+	Version 1: Initial Release
+	Version 2: Code clean up
+		</documentation>
+		<properties>
+			<property>
+				<name>Driver Information</name>
+				<type>LABEL</type>
+				<default>Driver Information</default>
+			</property>
+			<property>
+				<name>Debug Mode</name>
+				<type>LIST</type>
+				<items>
+					<item>Off</item>
+					<item>Print</item>
+					<item>Log</item>
+					<item>Print and Log</item>
+				</items>
+				<default>Off</default>
+				<readonly>false</readonly>
+			</property>
+		</properties>
+		<script jit="1" file="driver.lua"/>
+		<actions/>
+		<commands>
+			<command>
+				<name>Set Wallpaper</name>
+				<description>Set the Wallpaper on PARAM1 to: PARAM2</description>
+				<params>
+					<param>
+						<name>Room Selection</name>
+						<type>DEVICE_SELECTOR</type>
+						<items>
+							<item>roomdevice.c4i</item>
+						</items>
+						<multiselect>true</multiselect>
+						<default/>
+					</param>
+					<param>
+						<name>Wallpaper</name>
+						<type>CUSTOM_SELECT:GetWallpaperList</type>
+						<default/>
+					</param>
+				</params>
+			</command>
+		</commands>
+	</config>
+	<capabilities/>
+	<connections/>
+</devicedata>
