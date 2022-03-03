@@ -2,8 +2,8 @@
 -- Globals
 ---------------
 do
-	EX_CMD = {}
-	LUA_ACTION = {}
+	EC = {}
+	OPC = {}
 end
 
 -----------------------------------------------------------------------------
@@ -35,88 +35,12 @@ function SendToDevices(tList, strCommand, strWallpaper)
 	end
 end
 
-----------------------------------------------------------------------------------
---Function Name : EX_CMD.SETWALLPAPER
---Parameters    : tParams(table)
---Description   : Function called when "Set Wallpaper" ExecuteCommand is received.
-----------------------------------------------------------------------------------
-function EX_CMD.SETWALLPAPER(tParams)
-	Dbg("[EX_CMD] Set Wallpaper" .. " (" .. formatParams(tParams) .. ")")
-	local list = tParams["Room Selection"] or ""
-	local wallpaper = tParams["Wallpaper"] or ""
-	if (list == "") or (wallpaper == "") then return end
-	SendToDevices(list, "SET_LOCATION_PREFERENCE", wallpaper)
-end
-
------------------------------------------------------------------------------
---Function Name : EX_CMD.LUA_ACTION
---Parameters    : tParams(table)
---Description   : Function called when LUA ACTION ExecuteCommand is received.
------------------------------------------------------------------------------
-function EX_CMD.LUA_ACTION(tParams)
-	Dbg("[EX_CMD] LUA_ACTION" .. " (" ..  formatParams(tParams) .. ")")
-	if (tParams ~= nil) then
-		for cmd, cmdv in pairs(tParams) do 
-			if (cmd == "ACTION" and cmdv ~= nil) then
-				local status, err = pcall(LUA_ACTION[cmdv], tParams)
-				if (not status) then
-					print("LUA_ERROR: " .. err)
-				end
-				break
-			end
-		end
-	end
-end
-
------------------------------------------------------------------------------------------------------
---Function Name : ExecuteCommand
---Parameters    : strCommand(string), tParams(table)
---Description   : Function called by Director when a command is received for this DriverWorks driver.
------------------------------------------------------------------------------------------------------
-function ExecuteCommand(strCommand, tParams)
-	Dbg("ExecuteCommand: " .. strCommand .. " (" ..  formatParams(tParams) .. ")")
-	local strCommand = string.upper(strCommand)
-	local trimmedCommand = string.gsub(strCommand, " ", "")
-	local status, err
-	if (EX_CMD[strCommand] ~= nil and type(EX_CMD[strCommand]) == "function") then
-		status, err = pcall(EX_CMD[strCommand], tParams)
-	elseif (EX_CMD[trimmedCommand] ~= nil and type(EX_CMD[trimmedCommand]) == "function") then
-		status, err = pcall(EX_CMD[trimmedCommand], tParams)
-	elseif (EX_CMD[strCommand] ~= nil) then
-		QueueCommand(EX_CMD[strCommand])
-		status = true
-	else
-		print("ExecuteCommand: Unhandled command = " .. strCommand)
-		status = true
-	end
-	if (not status) then
-		print("LUA_ERROR: " .. err)
-	end
-end
-
-----------------------------------------------------------------------------
---Function Name : OnPropertyChanged(strProperty)
---Parameters    : strProperty(string)
---Description   : Function called by Director when a property changes value.
-----------------------------------------------------------------------------
-function OnPropertyChanged(strProperty)
-	local prop = Properties[strProperty]
-	if (strProperty == "Debug Mode") then
-		gDbgTimer = C4:KillTimer(gDbtTimer or 0)
-		gDbgPrint, gDbgLog = (prop:find("Print") ~= nil), (prop:find("Log") ~= nil)
-		if (prop == "Off") then return end
-		gDbgTimer = C4:AddTimer(8, "HOURS")
-		Dbg("Enabled Debug Timer for 8 hours")
-		return
-	end
-end
-
 --------------------------------------------------------------------------
 --Function Name : GetWallpaperList
 --Parameters    : currentValue(string)
 --Description   : Function called with CUSTOM_SELECT Property in Commands.
 --------------------------------------------------------------------------
-function GetWallpaperList (currentValue)
+function GetWallpaperList(currentValue)
 	local list = {}
 	local wallpapers = {}
 	
@@ -155,6 +79,79 @@ function GetWallpaperList (currentValue)
 	return list
 end
 
+-----------------------------------------------------------------------------------------------------
+--Function Name : ExecuteCommand
+--Parameters    : strCommand(string), tParams(table)
+--Description   : Function called by Director when a command is received for this DriverWorks driver.
+-----------------------------------------------------------------------------------------------------
+function ExecuteCommand(strCommand, tParams)
+	tParams = tParams or {}
+	Dbg("ExecuteCommand: " .. strCommand .. " (" ..  formatParams(tParams) .. ")")
+	if (strCommand == 'LUA_ACTION') then
+		if (tParams.ACTION) then
+			strCommand = tParams.ACTION
+			tParams.ACTION = nil
+		end
+	end
+	local strCommand = string.upper(strCommand)
+	strCommand = string.gsub(strCommand, "%s+", "_")
+	local success, ret
+	if (EC and EC[strCommand] and type(EC[strCommand]) == "function") then
+		success, ret = pcall(EC[strCommand], tParams)
+	end
+	if (success == true) then
+		return (ret)
+	elseif (success == false) then
+		print ("ExecuteCommand Lua error: ", strCommand, ret)
+	end
+end
+
+----------------------------------------------------------------------------------
+--Function Name : EC.SET_WALLPAPER
+--Parameters    : tParams(table)
+--Description   : Function called when "Set Wallpaper" ExecuteCommand is received.
+----------------------------------------------------------------------------------
+function EC.SET_WALLPAPER(tParams)
+	local list = tParams["Room Selection"] or ""
+	local wallpaper = tParams["Wallpaper"] or ""
+	if (list == "") or (wallpaper == "") then return end
+	SendToDevices(list, "SET_LOCATION_PREFERENCE", wallpaper)
+end
+
+----------------------------------------------------------------------------
+--Function Name : OnPropertyChanged(strProperty)
+--Parameters    : strProperty(string)
+--Description   : Function called by Director when a property changes value.
+----------------------------------------------------------------------------
+function OnPropertyChanged (strProperty)
+	Dbg("OnPropertyChanged: " .. strProperty .. " (" .. Properties[strProperty] .. ")")
+	local propertyValue = Properties[strProperty]
+	if (propertyValue == nil) then propertyValue = '' end
+	local strProperty = string.upper(strProperty)
+	strProperty = string.gsub(strProperty, "%s+", "_")
+	local success, ret
+	if (OPC and OPC[strProperty] and type(OPC[strProperty]) == "function") then
+		success, ret = pcall(OPC[strProperty], propertyValue)
+	end
+	if (success == true) then
+		return (ret)
+	elseif (success == false) then
+		print ("OnPropertyChanged Lua error: ", strProperty, ret)
+	end
+end
+
+-------------------------------------------------------------------------
+--Function Name : OPC.DEBUG_MODE(strProperty)
+--Parameters    : strProperty(string)
+--Description   : Function called when Debug Mode property changes value.
+-------------------------------------------------------------------------
+function OPC.DEBUG_MODE(strProperty)
+	gDbgPrint = C4:KillTimer(gDbgPrint or 0)
+	if (strProperty == "Off") then return end
+	gDbgPrint = C4:AddTimer(8, "HOURS")
+	print ("Enabled Debug Timer for 8 hours")
+end
+
 ---------------------------------------------------------------------------------------------
 --Function Name : Dbg
 --Parameters    : strDebugText(string)
@@ -162,7 +159,6 @@ end
 ---------------------------------------------------------------------------------------------
 function Dbg(strDebugText)
 	if (gDbgPrint) then print(strDebugText) end
-	if (gDbgLog) then C4:DebugLog("\r\n" .. strDebugText) end
 end
 
 ----------------------------------------------------------------
@@ -197,7 +193,7 @@ end
 --Description   : Function called when a driver is deleted from a project, updated within a project or Director is shut down.
 -----------------------------------------------------------------------------------------------------------------------------
 function OnDriverDestroyed()
-	gDbgTimer = C4:KillTimer(gDbgTimer or 0)
+	gDbgPrint = C4:KillTimer(gDbgPrint or 0)
 end
 
 ----------------------------------------------------------------------------
@@ -213,6 +209,10 @@ end
 --Description   : Function that serves as a callback into a project after the project is loaded.
 ------------------------------------------------------------------------------------------------
 function OnDriverLateInit()
+	DRIVER_NAME = C4:GetDriverConfigInfo("name")
+	DRIVER_VERSION = C4:GetDriverConfigInfo("version")
+	C4:UpdateProperty("Driver Name", DRIVER_NAME)
+	C4:UpdateProperty("Driver Version", DRIVER_VERSION)
 	for k,v in pairs(Properties) do OnPropertyChanged(k) end
 end
 
