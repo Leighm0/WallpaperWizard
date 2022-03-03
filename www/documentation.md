@@ -16,8 +16,3 @@ Control4 Driver to programmatically change the Wallpaper of room(s) in the UI
 - Version 2: Code clean up
 - Version 3: Documentation Template
 - Version 4: Code clean up
-
-#### To Do:
-
-- Upload wallpapers from driver itself
-- Maybe incorporate Weather Change for Wallpapers directly in this driver, instead of relying on Programming based on Weather Conditions.
