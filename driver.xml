@@ -1,11 +1,11 @@
 <devicedata>
-	<copyright>Copyright 2021 Welton Cartel. All rights reserved.</copyright>
+	<copyright>Copyright 2022 Welton Cartel. All rights reserved.</copyright>
 	<manufacturer>Control4</manufacturer>
 	<model>Wallpaper Wizard</model>
 	<creator>Welton Cartel</creator>
-	<version>2</version>
+	<version>4</version>
 	<created>13/9/2021 12:00 AM</created>
-	<modified>29/9/2021 12:00 AM</modified>
+	<modified>3/3/2022 12:00 AM</modified>
 	<name>Wallpaper Wizard</name>
 	<small>devices_sm/Android.gif</small>
 	<large>devices_lg/Android.gif</large>
@@ -15,17 +15,7 @@
 	<combo>true</combo>
 	<events/>
 	<config>
-		<documentation>
-	Wallpaper Wizard by Welton Cartel
-
-	This driver allows setting UI Wallpaper of selected rooms to custom wallpaper via programming.
-
-
-	RELEASE NOTES:
-
-	Version 1: Initial Release
-	Version 2: Code clean up
-		</documentation>
+		<documentation file="www/documentation/index.html"/>
 		<properties>
 			<property>
 				<name>Driver Information</name>
@@ -33,13 +23,23 @@
 				<default>Driver Information</default>
 			</property>
 			<property>
+				<name>Driver Name</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Driver Version</name>
+				<default/>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
 				<name>Debug Mode</name>
 				<type>LIST</type>
 				<items>
 					<item>Off</item>
-					<item>Print</item>
-					<item>Log</item>
-					<item>Print and Log</item>
+					<item>On</item>
 				</items>
 				<default>Off</default>
 				<readonly>false</readonly>
