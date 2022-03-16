@@ -1,6 +1,6 @@
 ![wallpaper](https://user-images.githubusercontent.com/69341431/158500846-8a5867bf-194d-4c33-9b99-327c78074b8f.png)
 
-# Wallpaper Wizard
+# Control4 Wallpaper Wizard
 
 Control4 Driver to programmatically change the Wallpaper of room(s) in the UI
 
