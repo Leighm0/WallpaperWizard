@@ -1,20 +1,23 @@
 <devicedata>
 	<copyright>Copyright 2022 Welton Cartel. All rights reserved.</copyright>
-	<manufacturer>Control4</manufacturer>
-	<model>Wallpaper Wizard</model>
 	<creator>Welton Cartel</creator>
-	<version>4</version>
-	<created>13/9/2021 12:00 AM</created>
-	<modified>3/3/2022 12:00 AM</modified>
+	<manufacturer>Control4</manufacturer>
 	<name>Wallpaper Wizard</name>
-	<small>devices_sm/Android.gif</small>
-	<large>devices_lg/Android.gif</large>
+	<model>Navigator UI</model>
+	<created>13/9/2021 12:00 AM</created>
+	<modified>16/03/2022 12:00 AM</modified>
+	<version>5</version>
 	<control>lua_gen</control>
 	<driver>DriverWorks</driver>
-	<proxy>WallpaperWizard</proxy>
 	<combo>true</combo>
+	<small image_source="c4z">icons/device_sm.png</small>
+	<large image_source="c4z">icons/device_lg.png</large>
+	<proxies>
+		<proxy name="Wallpaper Wizard" image_source="c4z" large_image="icons/device_lg.png" small_image="icons/device_sm.png">WallpaperWizard</proxy>
+	</proxies>
 	<events/>
 	<config>
+		<script jit="1" file="driver.lua"/>
 		<documentation file="www/documentation/index.html"/>
 		<properties>
 			<property>
@@ -45,7 +48,6 @@
 				<readonly>false</readonly>
 			</property>
 		</properties>
-		<script jit="1" file="driver.lua"/>
 		<actions/>
 		<commands>
 			<command>
