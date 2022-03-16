@@ -5,6 +5,7 @@
 Control4 Driver to programmatically change the Wallpaper of room(s) in the UI
 
 #### Key Factors:
+
 - Multiple Room Selections are possible to change wallpaper on several rooms at once
 - Custom Wallpapers need to be uploaded to your Controller under "media\wallpaper\onscreen\custom" from it's Network Share
 
