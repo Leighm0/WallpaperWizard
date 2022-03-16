@@ -19,3 +19,4 @@ Control4 Driver to programmatically change the Wallpaper of room(s) in the UI
 - Version 2: Code clean up
 - Version 3: Documentation Template
 - Version 4: Code clean up
+- Version 5: Icon for Driver and LUA/XML cleanup
