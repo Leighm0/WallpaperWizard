@@ -6,7 +6,7 @@
 	<model>Navigator UI</model>
 	<created>13/9/2021 12:00 AM</created>
 	<modified>16/03/2022 12:00 AM</modified>
-	<version>5</version>
+	<version>6</version>
 	<control>lua_gen</control>
 	<driver>DriverWorks</driver>
 	<combo>true</combo>

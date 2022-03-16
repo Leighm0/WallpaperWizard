@@ -4,6 +4,8 @@
 do
 	EC = {}
 	OPC = {}
+	g_debugMode = 0
+	g_DbgPrint = nil
 end
 
 ----------------------------------------------------------------------------
@@ -29,15 +31,15 @@ end
 --Description   : Function called when a driver is deleted from a project, updated within a project or Director is shut down.
 -----------------------------------------------------------------------------------------------------------------------------
 function OnDriverDestroyed()
-	gDbgPrint = C4:KillTimer(gDbgPrint or 0)
+	if (g_DbgPrint ~= nil) then g_DbgPrint:Cancel() end
 end
 
 ----------------------------------------------------------------------------
---Function Name : OnPropertyChanged(strProperty)
---Parameters    : strProperty(string)
+--Function Name : OnPropertyChanged
+--Parameters    : strProperty(str)
 --Description   : Function called by Director when a property changes value.
 ----------------------------------------------------------------------------
-function OnPropertyChanged (strProperty)
+function OnPropertyChanged(strProperty)
 	Dbg("OnPropertyChanged: " .. strProperty .. " (" .. Properties[strProperty] .. ")")
 	local propertyValue = Properties[strProperty]
 	if (propertyValue == nil) then propertyValue = '' end
@@ -55,20 +57,28 @@ function OnPropertyChanged (strProperty)
 end
 
 -------------------------------------------------------------------------
---Function Name : OPC.DEBUG_MODE(strProperty)
---Parameters    : strProperty(string)
+--Function Name : OPC.DEBUG_MODE
+--Parameters    : strProperty(str)
 --Description   : Function called when Debug Mode property changes value.
 -------------------------------------------------------------------------
 function OPC.DEBUG_MODE(strProperty)
-	gDbgPrint = C4:KillTimer(gDbgPrint or 0)
-	if (strProperty == "Off") then return end
-	gDbgPrint = C4:AddTimer(8, "HOURS")
-	print ("Enabled Debug Timer for 8 hours")
+	if (strProperty == "Off") then
+		if (g_DbgPrint ~= nil) then g_DbgPrint:Cancel() end
+		g_debugMode = 0
+		print ("Debug Mode: Off")
+	else
+		g_debugMode = 1
+		print ("Debug Mode: On for 8 hours")
+		g_DbgPrint = C4:SetTimer(28800000, function(timer)
+			C4:UpdateProperty("Debug Mode", "Off")
+			timer:Cancel()
+		end, false)
+	end
 end
 
 -----------------------------------------------------------------------------------------------------
 --Function Name : ExecuteCommand
---Parameters    : strCommand(string), tParams(table)
+--Parameters    : strCommand(str), tParams(table)
 --Description   : Function called by Director when a command is received for this DriverWorks driver.
 -----------------------------------------------------------------------------------------------------
 function ExecuteCommand(strCommand, tParams)
@@ -107,7 +117,7 @@ end
 
 -----------------------------------------------------------------------------
 --Function Name : SendToDevices
---Parameters    : tList(table), strCommand(string), tParams(table)
+--Parameters    : tList(table), strCommand(str), tParams(table)
 --Description   : Function called to send wallpaper change to Identity agent.
 -----------------------------------------------------------------------------
 function SendToDevices(tList, strCommand, strWallpaper)
@@ -136,7 +146,7 @@ end
 
 --------------------------------------------------------------------------
 --Function Name : GetWallpaperList
---Parameters    : currentValue(string)
+--Parameters    : currentValue(str)
 --Description   : Function called with CUSTOM_SELECT Property in Commands.
 --------------------------------------------------------------------------
 function GetWallpaperList(currentValue)
@@ -173,16 +183,16 @@ end
 
 ---------------------------------------------------------------------------------------------
 --Function Name : Dbg
---Parameters    : strDebugText(string)
+--Parameters    : strDebugText(str)
 --Description   : Function called when debug information is to be printed/logged (if enabled)
 ---------------------------------------------------------------------------------------------
 function Dbg(strDebugText)
-	if (gDbgPrint) then print(strDebugText) end
+    if (g_debugMode == 1) then print(strDebugText) end
 end
 
 ----------------------------------------------------------------
 --Function Name : trim
---Parameters    : s(string)
+--Parameters    : s(str)
 --Description   : Function called to trim whitespace in a string
 ----------------------------------------------------------------
 function trim(s)
