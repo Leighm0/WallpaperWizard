@@ -126,21 +126,23 @@ function SendToDevices(tList, strCommand, strWallpaper)
 	local agent = "control4_agent_identity.c4i"
 	local devices = C4:GetDevicesByC4iName(agent)
 	local proxyId = ""
-	if (devices ~= nil) then
+	if (devices and next(devices)) then
 		for k,v in pairs(devices) do
 			if (v == "Identity") then proxyId = k end
 		end
 	end
 	if (proxyId == "") then return end
-	for id in tList:gfind("(%d+),") do
-		local roomId = tonumber(id) or 0
-		if (roomId == 0) then break end
-		tParams["USERNAME"] = "primaryuser"
-		tParams["LOCATION_ID"] = roomId
-		tParams["NAME"] = "wallpaper"
-		tParams["VALUE"] = strWallpaper
-		C4:SendToDevice(proxyId, strCommand, tParams)
-		Dbg("C4:SendToDevice(" .. proxyId .. ", \"" .. strCommand .. "\", " .. formatParams(tParams) .. ")")
+	if (tList ~= "" and tList ~= nil) then
+		for id in tList:gfind("(%d+),") do
+			local roomId = tonumber(id) or 0
+			if (roomId == 0) then break end
+			tParams["USERNAME"] = "primaryuser"
+			tParams["LOCATION_ID"] = roomId
+			tParams["NAME"] = "wallpaper"
+			tParams["VALUE"] = strWallpaper
+			C4:SendToDevice(proxyId, strCommand, tParams)
+			Dbg("C4:SendToDevice(" .. proxyId .. ", \"" .. strCommand .. "\", " .. formatParams(tParams) .. ")")
+		end
 	end
 end
 
@@ -156,23 +158,27 @@ function GetWallpaperList(currentValue)
 	local custom_dir = C4:FileSetDir("/media/wallpaper/onscreen/custom")
 	local custom_wallpapers = C4:FileList(custom_dir)
 	---- Add in custom wallpaper list from files on controller
-	for id, filename in pairs (custom_wallpapers) do
-		local item = {
-			value = "/media/wallpaper/onscreen/custom/" .. filename,
-			text = filename,
-		}
-		table.insert (list, item)
+	if (custom_wallpapers and next(custom_wallpapers)) then
+		for id, filename in pairs (custom_wallpapers) do
+			local item = {
+				value = "/media/wallpaper/onscreen/custom/" .. filename,
+				text = filename,
+			}
+			table.insert (list, item)
+		end
 	end
 	-- Default Wallpapers
 	local def_dir = C4:FileSetDir("/media/wallpaper/onscreen/default")
 	local def_wallpapers = C4:FileList(def_dir)
 	---- Add in wallpaper list from files on controller
-	for id, filename in pairs (def_wallpapers) do
-		local item = {
-			value = "/media/wallpaper/onscreen/default/" .. filename,
-			text = filename,
-		}
-		table.insert (list, item)
+	if (def_wallpapers and next(def_wallpapers)) then
+		for id, filename in pairs (def_wallpapers) do
+			local item = {
+				value = "/media/wallpaper/onscreen/default/" .. filename,
+				text = filename,
+			}
+			table.insert (list, item)
+		end
 	end
 	local _sort = function (a, b)
 		return (a.text < b.text)
@@ -207,11 +213,13 @@ end
 function formatParams(tParams)
 	tParams = tParams or {}
 	local out = {}
-	for k,v in pairs(tParams) do
-		if (type(v) == "string") then
-			table.insert(out, k .. " = \"" .. v .. "\"")
-		else
-			table.insert(out, k .. " = " .. tostring(v))
+	if (tParams and next(tParams)) then
+		for k,v in pairs(tParams) do
+			if (type(v) == "string") then
+				table.insert(out, k .. " = \"" .. v .. "\"")
+			else
+				table.insert(out, k .. " = " .. tostring(v))
+			end
 		end
 	end
 	return "{" .. table.concat(out, ", ") .. "}"

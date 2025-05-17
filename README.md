@@ -21,6 +21,7 @@ Control4 Driver to programmatically change the Wallpaper of room(s) in the UI
 - Version 4: Code clean up
 - Version 5: Icon for Driver and LUA/XML cleanup
 - Version 6: Debug functions revamped
+- Version 7: Error checking added to fix some issues
 
 ## Compiled Driver Available from Releases:
 https://github.com/Leighm0/WallpaperWizard/releases

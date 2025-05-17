@@ -1,12 +1,12 @@
 <devicedata>
-	<copyright>Copyright 2022 Welton Cartel. All rights reserved.</copyright>
+	<copyright>Copyright 2025 Welton Cartel. All rights reserved.</copyright>
 	<creator>Welton Cartel</creator>
 	<manufacturer>Control4</manufacturer>
 	<name>Wallpaper Wizard</name>
 	<model>Navigator UI</model>
 	<created>13/9/2021 12:00 AM</created>
-	<modified>16/03/2022 12:00 AM</modified>
-	<version>6</version>
+	<modified>16/5/2025 12:00 AM</modified>
+	<version>7</version>
 	<control>lua_gen</control>
 	<driver>DriverWorks</driver>
 	<combo>true</combo>
